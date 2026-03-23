@@ -26,7 +26,7 @@
             padding: 48px 64px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             text-align: center;
-            min-width: 320px;
+            min-width: 360px;
         }
 
         .timer {
@@ -50,12 +50,13 @@
 
         .controls {
             display: flex;
-            gap: 16px;
+            gap: 12px;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         button {
-            padding: 12px 32px;
+            padding: 12px 24px;
             font-size: 16px;
             border: none;
             border-radius: 8px;
@@ -82,6 +83,11 @@
             background: #95a5a6;
             color: white;
         }
+
+        .btn-switch {
+            background: #3498db;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -92,6 +98,7 @@
             <button class="btn-start" id="startBtn" onclick="start()">开始</button>
             <button class="btn-pause" id="pauseBtn" onclick="pause()">暂停</button>
             <button class="btn-reset" id="resetBtn" onclick="reset()">重置</button>
+            <button class="btn-switch" id="switchBtn" onclick="switchMode()">切换</button>
         </div>
     </div>
 
@@ -117,11 +124,17 @@
             timerEl.textContent = formatTime(timeLeft);
         }
 
+        function updateStatus() {
+            if (isRunning) {
+                statusEl.textContent = isFocusMode ? '专注中' : '休息中';
+                statusEl.className = 'status ' + (isFocusMode ? 'focus' : 'break');
+            }
+        }
+
         function start() {
             if (isRunning) return;
             isRunning = true;
-            statusEl.textContent = isFocusMode ? '专注中' : '休息中';
-            statusEl.className = 'status ' + (isFocusMode ? 'focus' : 'break');
+            updateStatus();
             
             interval = setInterval(() => {
                 timeLeft--;
@@ -135,7 +148,7 @@
                     isFocusMode = !isFocusMode;
                     timeLeft = isFocusMode ? FOCUS_TIME : BREAK_TIME;
                     updateDisplay();
-                    statusEl.textContent = isFocusMode ? '专注时间到！准备开始' : '休息时间！';
+                    statusEl.textContent = '时间到！';
                     statusEl.className = 'status';
                 }
             }, 1000);
@@ -157,6 +170,16 @@
             updateDisplay();
             statusEl.textContent = '准备开始';
             statusEl.className = 'status';
+        }
+
+        function switchMode() {
+            isRunning = false;
+            clearInterval(interval);
+            isFocusMode = !isFocusMode;
+            timeLeft = isFocusMode ? FOCUS_TIME : BREAK_TIME;
+            updateDisplay();
+            statusEl.textContent = isFocusMode ? '准备开始' : '休息中';
+            statusEl.className = 'status ' + (isFocusMode ? '' : 'break');
         }
     </script>
 </body>
